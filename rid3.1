@@ -1,0 +1,121 @@
+.TH RID3 1 July\ 7,\ 2015
+.SH NAME
+rid3 \- read ID3 tags
+.SH SYNOPSIS
+.B rid3
+.RB [ \-gty ]\ [ \-f
+.IR format ]\ [ FILE ]...
+.SH DESCRIPTION
+.B rid3
+outputs the title, artist, album, year, genre, and track number from
+files containing ID3v1, ID3v1.1, ID3v2.2, ID3v2.3, or ID3v2.4 tags as UTF-8
+Unicode text.
+.SH OPTIONS
+.TP
+.BI \-f " format"
+controls the output of
+.B rid3
+according to a
+.BR printf -like
+syntax.
+.I format
+may consist of ordinary characters, which are output unmodified, escape
+sequences, and conversion specifications. Conversion specifications are replaced
+by data from the ID3 tag, input arguments (i.e. file pathnames), or a percent
+character. Conversion specifications begin with the
+.B %
+character and end with a conversion character.
+.RS
+.PP
+The following are the conversion characters:
+.TP
+.B t
+specifies the title.
+.TP
+.B a
+specifies the artist.
+.TP
+.B A
+specifies the album.
+.TP
+.B y
+specifies the year.
+.TP
+.B g
+specifies the genre.
+.TP
+.B T
+specifies the track number.
+.TP
+.B f
+specifies the input argument (i.e. file pathname).
+.PP
+The following are the escape sequences:
+.TP
+.B \et
+specifies that a tab character be output.
+.TP
+.B \en
+specifies that a newline character be output.
+.TP
+.B \e\e
+specifies that a backslash character be output.
+.PP
+.I format
+defaults to
+.BR """%f\en\etTitle:\ %t\en\etArtist:\ %a\en\etAlbum:\ %A\en\etYear:\ %y\en\et\
+Track:\ %T\en\etGenre:\ %g\en""" .
+.RE
+.PP
+By default,
+.B rid3
+replaces genre references with genre names, outputs only the track number (and
+omits any slash character and number of tracks), and outputs only the year (and
+not the full recording date in ID3v2.4 tags). For genre references succeeded by
+a refinement, only the refinement is output. The following options modify the
+default behavior:
+.TP
+.B \-g
+specifies that genre data be output unmodified, leaving genre references intact.
+.TP
+.B \-t
+specifies that all track data be output, including the number of tracks if it
+exists.
+.TP
+.B \-y
+specifies that the full recording date in ID3v2.4 tags be output.
+.SH CAVEATS
+.B rid3
+is implemented using string constants for genre names, frame identifiers, and
+the default format string. Also, ISO-8859-1 text in ID3 tags is not explicitly
+converted to UTF-8. Thus, for output to be entirely UTF-8, the execution
+character encoding and input character encoding must be compatible with UTF-8,
+ISO-8859-1 text in ID3 tags must be limited to ASCII characters, and input
+supplied via
+.I format
+must be limited to characters which are encoded identically in UTF-8.
+.PP
+Compressed or encrypted frames in ID3v2.3 and ID3v2.4 tags are ignored.
+.PP
+The ID3v2.3 standard states that null-terminated strings should be ignored, but
+.B rid3
+does not ignore them.
+.PP
+Only the first tag at the beginning of a file is read when searching for
+ID3v2.2, ID3v2.3, and ID3v2.4 tags. The "tag is an update" flag in ID3v2.4 tags
+is ignored, and
+.B rid3
+does not search for appended ID3v2.4 tags.
+.PP
+Multiple strings in ID3v2.4 text information frames are not output; only the
+first occurring string is output.
+.SH AUTHORS
+See the
+.B LICENSE
+file.
+.SH LICENSE
+See the
+.B LICENSE
+file.
+.SH SEE ALSO
+.BR printf (3)
